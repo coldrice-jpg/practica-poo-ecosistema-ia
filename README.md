@@ -80,7 +80,7 @@ git push origin main
 
 En esta fase se desarrolló e integró la lógica de protección del estado interno para los objetos `ModeloIA`, asegurando que métricas sensibles de machine learning no puedan ser alteradas externamente de manera maliciosa o errónea.
 
-### 🛡️ Aplicación de la Encapsulación en `ModeloIA`
+### Aplicación de la Encapsulación en `ModeloIA`
 
 La clase `ModeloIA` implementa la ocultación de información mediante los siguientes mecanismos clave:
 
