@@ -13,7 +13,7 @@ public class ModeloRegresion extends ModeloIA {
 
     @Override
     public void mostrarMetricas() {
-        super.mostrarMetricas(); // Invoca los datos generales
+        super.mostrarMetricas();
         System.out.println("Coeficiente de Regularización: " + coeficienteRegularizacion);
     }
 
