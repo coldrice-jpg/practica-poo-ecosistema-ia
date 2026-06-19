@@ -248,7 +248,7 @@ Dentro del simulador conviven dos conceptos clave de abstracción pura que resue
 
 ---
 
-## 3. Salida de la Consola (Ejecución del Simulador)
+### 3. Salida de la Consola
 
 A continuación, se detalla la traza de ejecución generada por la clase orquestadora `SimuladorIA`, demostrando la protección contra instanciación genérica, el entrenamiento polimórfico dirigido y el comportamiento diferenciado del pipeline de procesamiento de texto:
 
@@ -277,3 +277,81 @@ Usando: TokenizadorHuggingFace (Subwords/Signos)
 Tokens generados: [ 'Corelia' ' ' 'automatiza' ' ' 'los' ' ' 'procesos' ' ' 'académicos' ' ' 'universitarios' '.' ' ' ]
 ```
 
+## Fase 5: Abstracción y Contratos Estructurales (`feature/abstraction-contracts`)
+
+En esta fase, el simulador evoluciona hacia un diseño más robusto mediante la implementación de **Clases Abstractas** y **Contratos Estructurales (Interfaces)**, garantizando la integridad de los componentes del sistema.
+
+### 1. Robustez del Diseño mediante Abstracción
+Al transformar la superclase `ModeloIA` en una **Clase Abstracta**, se prohibió su instanciación directa (`new ModeloIA()`). En un entorno real de producción, no existe un "modelo de IA" genérico en ejecución; siempre se trata de una arquitectura o algoritmo específico (como una Red Neuronal o un Árbol de Decisión).
+
+* **Prevención de Modelos Incompletos:** La abstracción impide que el sistema cree objetos vacíos o sin lógica matemática definida. Al declarar el método `public abstract void entrenar();`, delegamos la responsabilidad de la implementación exacta a las subclases concretas. Esto asegura que cualquier algoritmo que se incorpore al simulador cumpla obligatoriamente con el ciclo de vida del pipeline sin acoplarse a su resolución interna.
+
+### 2. Diferencia entre Clases Abstractas e Interfaces en el Pipeline
+Dentro del simulador conviven dos conceptos clave de abstracción pura que resuelven problemas distintos:
+
+| Criterio | Clase Abstracta (`ModeloIA`) | Interfaz (`Tokenizador`) |
+| :--- | :--- | :--- |
+| **Propósito** | Define un molde conceptual e identidad para una jerarquía de objetos relacionados ("Es un..."). | Define una capacidad, comportamiento o contrato puro intercambiable ("Puede hacer..."). |
+| **Estado y Atributos** | Puede contener atributos encapsulados (variables de instancia como `nombre` y `precision`) y lógica compartida (`mostrarMetricas()`). | No posee estado (variables de instancia). Solo declara firmas de métodos que actúan como capas puras. |
+| **Herencia / Implementación** | Las subclases extienden (`extends`) una única superclase abstracta debido a la herencia simple en Java. | Las clases implementan (`implements`) una o múltiples interfaces, permitiendo un desacoplamiento total de estrategias en tiempo de ejecución. |
+
+---
+
+## Fase 6: Orquestación con Colecciones Dinámicas (`feature/dynamic-collections`)
+
+Esta fase resuelve las limitaciones de escalabilidad de la arquitectura previa al migrar de arreglos rígidos de tamaño estático (`[]`) a estructuras de datos dinámicas provistas por el **Java Collections Framework**. Esto permite al simulador gestionar cargas y pipelines dinámicos en tiempo de ejecución.
+
+### 1. Gestión Dinámica del Ciclo de Vida (`List`)
+La clase orquestadora `SimuladorIA` centraliza los componentes sustituyendo el arreglo fijo por una lista genérica:
+* **Estructura:** `List<ModeloIA> inventarioModelos = new ArrayList<>();`
+* **Impacto:** Permite la adición orgánica de nuevos algoritmos (`RedNeuronal`, `ArbolDecision`, `ModeloRegresion`) en tiempo de ejecución mediante `.add()`, simulando un entorno de producción donde los modelos se despliegan de forma elástica sin necesidad de reiniciar la infraestructura ni redimensionar contenedores rígidos.
+
+### 2. Catálogo Indexado de Componentes (`Map`)
+Para evitar el uso de lógica condicional acoplada (`if/else` duros) o variables sueltas al seleccionar procesadores de lenguaje natural, se estructuró un catálogo centralizado en memoria:
+* **Estructura:** `Map<String, Tokenizador> catalogoTokenizadores = new HashMap<>();`
+* **Impacto:** Los procesadores se registran bajo claves semánticas únicas (`"BASICO"`, `"HUGGING_FACE"`). El pipeline recupera el componente deseado de forma directa con `.get(clave)`, logrando un desacoplamiento absoluto en la arquitectura del procesamiento de texto.
+
+### 3. Flexibilidad y Reglas de Negocio Avanzadas (Filtrado)
+Gracias a las ventajas de legibilidad y manipulación que ofrece el framework de colecciones, se incorporó un módulo de auditoría encargado de filtrar estructuras en base a umbrales específicos de negocio (por ejemplo, reportar únicamente aquellos modelos cuya precisión post-entrenamiento sea estrictamente superior al 80%).
+
+---
+
+### 4. Salida de la Consola
+
+A continuación, se detalla la traza de ejecución generada por la clase orquestadora `SimuladorIA` en esta fase, reflejando el inventario dinámico, la resolución por clave del mapa y el filtrado avanzado:
+
+```text
+Ejecutando Ciclo de Vida y Entrenamiento Dinámico
+[Estado Inicial]
+Modelo: Perceptrón Multicapa   | Precisión Actual: 70.00%
+-> Entrenando Red Neuronal mediante Backpropagation...
+[Estado Post-Entrenamiento]
+Modelo: Perceptrón Multicapa   | Precisión Actual: 85.00%
+
+[Estado Inicial]
+Modelo: Random Forest Node   | Precisión Actual: 65.00%
+-> Entrenando Árbol de Decisión calculando la Ganancia de Información...
+[Estado Post-Entrenamiento]
+Modelo: Random Forest Node   | Precisión Actual: 81.00%
+
+[Estado Inicial]
+Modelo: ElasticNet Linear    | Precisión Actual: 60.00%
+-> Ajustando coeficientes de Regresión con regularización Lasso...
+[Estado Post-Entrenamiento]
+Modelo: ElasticNet Linear    | Precisión Actual: 64.00%
+
+[Estado Inicial]
+Modelo: Deep CNN Vision      | Precisión Actual: 55.00%
+-> Entrenando Red Neuronal mediante Backpropagation...
+[Estado Post-Entrenamiento]
+Modelo: Deep CNN Vision      | Precisión Actual: 80.00%
+
+Pipeline de Procesamiento de Texto Abstracto
+Componente recuperado con éxito mediante la clave: HUGGING_FACE
+Tokens generados: [ 'Corelia' ' ' 'optimiza' ' ' 'la' ' ' 'gestión' ' ' 'del' ' ' 'tiempo' ' ' 'de' ' ' 'los' ' ' 'estudiantes' '.' ' ' ]
+
+Reporte de Auditoría: Modelos de Alta Precisión
+Filtrando modelos con precisión estrictamente superior al 80%
+ -> [APROBADO] Perceptrón Multicapa (85.00%)
+ -> [APROBADO] Random Forest Node (81.00%)
+````
