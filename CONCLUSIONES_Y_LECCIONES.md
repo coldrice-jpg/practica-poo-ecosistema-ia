@@ -22,10 +22,16 @@ El ciclo de desarrollo del simulador de IA representa una evolución incremental
 
 Para alcanzar los umbrales de aceptación de la política de calidad de la empresa, el proyecto fue sometido a una auditoría estática automatizada en entorno local.
 
-* **Estado del Tablero Inicial (Antes de la refactorización):** El primer escaneo detectó múltiples *Code Smells* críticos debido a acoplamientos innecesarios entre paquetes, la presencia de código repetitivo (*boilerplate code*) heredado de estructuras de Java 8, y advertencias por el uso de impresiones directas en consola (`System.out.println`) en capas de lógica intermedia.
-* **Estado del Tablero de Calidad Final (Después de la refactorización):** Tras corregir las advertencias de empaquetado, unificar los modelos lógicos dentro del mismo package, implementar los nuevos componentes nativos de Java 17 y asegurar que no existieran bloques de captura vacíos ni variables muertas, el proyecto obtuvo el estado **EXITOSO (Verde / Approved)**, registrando **0 Bugs, 0 Vulnerabilities, 0 Security Hotspots y un 0% de Duplicación de Código**.
+#### Estado del Tablero Inicial (Antes de la Refactorización)
+El primer escaneo detectó múltiples *Code Smells* críticos debido a acoplamientos innecesarios entre paquetes (clases heredando de paquetes obsoletos externos), la presencia de código repetitivo (*boilerplate code*) heredado de estructuras de Java 8, y advertencias por el uso de impresiones directas en consola (`System.out.println`) en capas de lógica intermedia.
 
-*(Nota: Adjunte en esta sección las capturas de pantalla de su panel local de SonarQube correspondientes al "Antes" y "Después" para cumplir con la evidencia visual requerida).*
+<img width="896" height="441" alt="image" src="https://github.com/user-attachments/assets/6faeb59d-8434-444c-8700-f61735dae88d" />
+
+#### Estado del Tablero de Calidad Final (Después de la Refactorización)
+Tras corregir las advertencias de empaquetado, unificar los modelos lógicos dentro del mismo package (`com.ia.simulador.modernizacion`), implementar los nuevos componentes nativos de Java 17 (Records, Sealed Classes, Switch Expressions) y asegurar que no existieran bloques de captura vacíos ni variables muertas, el proyecto superó exitosamente todas las métricas de la plataforma.
+
+<img width="1231" height="516" alt="image" src="https://github.com/user-attachments/assets/c737cee0-27bb-438c-b090-c10e02d977d4" />
+
 
 ---
 
@@ -43,7 +49,7 @@ Por otro lado, el diseño clásico de herencia permitía que cualquier clase ext
 * **Respuesta:** Los tres incidentes de deuda técnica detectados y sus respectivas soluciones bajo principios de *Clean Code* fueron:
   1. *Uso de flujos de salida genéricos para trazas de error:* SonarQube penalizó el uso de impresiones directas para manejar excepciones. Se solucionó reemplazándolos por excepciones estructuradas que transportan el mensaje contextual a capas superiores y usando adecuadamente los reportes limpios del orquestador.
   2. *Estructuras de bifurcación condicional redundantes (Switch clásico):* El uso de estructuras `switch` heredadas con múltiples declaraciones `break` y variables mutables intermedias fue catalogado como una fuente potencial de bugs y complejidad cognitiva alta. Se aplicó el principio de simplificación funcional mediante **Switch Expressions**, erradicando los `break` y asignando flujos de retorno directo mediante flechas (`->`).
-  3. *Inconsistencia y acoplamiento cruzado de paquetes:* Las subclases heredaban de un paquete obsoleto (`com.ia.encapsulamiento`), obligando a realizar importaciones cruzadas que degradaban la mantenibilidad. Se aplicó el principio de alta cohesión agrupando la jerarquía sellada bajo un único paquete común (`com.ia.simulador.modernizacion`).
+  3. *Inconsistencia y acoplamiento cruzado de paquetes:* Las subclases heredaban de un paquete obsoleto (`com.ia.encapsulamiento`), obligando a realizar importaciones cruzadas que degradaban la mantenibilidad y rompían las restricciones de confinamiento de clases selladas. Se aplicó el principio de alta cohesión agrupando la jerarquía sellada bajo un único paquete común (`com.ia.simulador.modernizacion`).
 
 #### 3. Sobre el Flujo de Control y Resiliencia
 **¿Cómo interactúa el mecanismo de manejo de excepciones desarrollado en la Fase 7 con las métricas de confiabilidad analizadas por SonarQube? ¿Evitó esto la presencia de bloques vacíos (catch blocks) penalizados por la plataforma?**
