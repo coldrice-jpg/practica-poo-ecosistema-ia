@@ -1,81 +1,48 @@
 package com.ia.encapsulamiento;
 
-import java.util.Random;
-
-public class ModeloIA {
-
-    // Atributos privados
+public abstract class ModeloIA {
     private String nombre;
-    private double precision;
-    private int epocasEntrenadas;
     private double tasaAprendizaje;
-
-    private final Random random = new Random();
+    private double precision;
+    private int epocas;
 
     // Constructor
-    public ModeloIA(String nombre, double tasaAprendizaje) {
+    protected ModeloIA(String nombre, double tasaAprendizaje) {
         this.nombre = nombre;
-
-        if (tasaAprendizaje > 0.0 && tasaAprendizaje < 1.0) {
-            this.tasaAprendizaje = tasaAprendizaje;
-        } else {
-            System.out.println("[" + nombre + "] Tasa de aprendizaje inválida en constructor. " +
-                    "Asignando valor por defecto: 0.01");
-            this.tasaAprendizaje = 0.01;
-        }
-        this.epocasEntrenadas = 0;
-        this.precision = 50.0;
+        this.tasaAprendizaje = tasaAprendizaje;
+        this.precision = 0.0;
+        this.epocas = 0;
     }
 
-    // Getters
+    // Getters y Setters
     public String getNombre() {
         return nombre;
-    }
-
-    public double getPrecision() {
-        return precision;
-    }
-
-    public int getEpocasEntrenadas() {
-        return epocasEntrenadas;
     }
 
     public double getTasaAprendizaje() {
         return tasaAprendizaje;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public double getPrecision() {
+        return precision;
     }
 
-    public void setTasaAprendizaje(double tasaAprendizaje) {
-        if (tasaAprendizaje > 0.0 && tasaAprendizaje < 1.0) {
-            this.tasaAprendizaje = tasaAprendizaje;
-            System.out.println("[" + nombre + "] Tasa de aprendizaje actualizada exitosamente a: " + tasaAprendizaje);
-        } else {
-            System.out.println("[" + nombre + "]: Intento de asignar tasa inválida (" + tasaAprendizaje + ")." +
-                    " Se mantiene el valor anterior: " + this.tasaAprendizaje);
-        }
+    protected void setPrecision(double precision) {
+        this.precision = precision;
     }
 
-    public void entrenar() {
-        this.epocasEntrenadas++;
+    public int getEpocas() {
+        return epocas;
+    }
 
-        double factorMaximo = (100.0 - this.precision) * this.tasaAprendizaje;
-        double incremento = (random.nextDouble() * factorMaximo) + 0.1;
-
-        this.precision += incremento;
-
-        if (this.precision > 100.0) {
-            this.precision = 100.0;
-        }
+    protected void setEpocas(int epocas) {
+        this.epocas = epocas;
     }
 
     public void mostrarMetricas() {
-        System.out.printf("Modelo IA: %-15s", this.nombre);
-        System.out.printf("Precisión: %6.2f%%", this.precision);
-        System.out.printf("Épocas: %d", this.epocasEntrenadas);
-        System.out.printf("Tasa Learning: %.4f", this.tasaAprendizaje);
+        System.out.println("--- Métricas del Modelo: " + nombre + " ---");
+        System.out.println("Tasa de Aprendizaje: " + tasaAprendizaje);
+        System.out.println("Precisión Actual: " + (precision * 100) + "%");
+        System.out.println("Épocas de Entrenamiento: " + epocas);
     }
-
 }
