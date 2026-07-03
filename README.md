@@ -277,26 +277,6 @@ Usando: TokenizadorHuggingFace (Subwords/Signos)
 Tokens generados: [ 'Corelia' ' ' 'automatiza' ' ' 'los' ' ' 'procesos' ' ' 'académicos' ' ' 'universitarios' '.' ' ' ]
 ```
 
-## Fase 5: Abstracción y Contratos Estructurales (`feature/abstraction-contracts`)
-
-En esta fase, el simulador evoluciona hacia un diseño más robusto mediante la implementación de **Clases Abstractas** y **Contratos Estructurales (Interfaces)**, garantizando la integridad de los componentes del sistema.
-
-### 1. Robustez del Diseño mediante Abstracción
-Al transformar la superclase `ModeloIA` en una **Clase Abstracta**, se prohibió su instanciación directa (`new ModeloIA()`). En un entorno real de producción, no existe un "modelo de IA" genérico en ejecución; siempre se trata de una arquitectura o algoritmo específico (como una Red Neuronal o un Árbol de Decisión).
-
-* **Prevención de Modelos Incompletos:** La abstracción impide que el sistema cree objetos vacíos o sin lógica matemática definida. Al declarar el método `public abstract void entrenar();`, delegamos la responsabilidad de la implementación exacta a las subclases concretas. Esto asegura que cualquier algoritmo que se incorpore al simulador cumpla obligatoriamente con el ciclo de vida del pipeline sin acoplarse a su resolución interna.
-
-### 2. Diferencia entre Clases Abstractas e Interfaces en el Pipeline
-Dentro del simulador conviven dos conceptos clave de abstracción pura que resuelven problemas distintos:
-
-| Criterio | Clase Abstracta (`ModeloIA`) | Interfaz (`Tokenizador`) |
-| :--- | :--- | :--- |
-| **Propósito** | Define un molde conceptual e identidad para una jerarquía de objetos relacionados ("Es un..."). | Define una capacidad, comportamiento o contrato puro intercambiable ("Puede hacer..."). |
-| **Estado y Atributos** | Puede contener atributos encapsulados (variables de instancia como `nombre` y `precision`) y lógica compartida (`mostrarMetricas()`). | No posee estado (variables de instancia). Solo declara firmas de métodos que actúan como capas puras. |
-| **Herencia / Implementación** | Las subclases extienden (`extends`) una única superclase abstracta debido a la herencia simple en Java. | Las clases implementan (`implements`) una o múltiples interfaces, permitiendo un desacoplamiento total de estrategias en tiempo de ejecución. |
-
----
-
 ## Fase 6: Orquestación con Colecciones Dinámicas (`feature/dynamic-collections`)
 
 Esta fase resuelve las limitaciones de escalabilidad de la arquitectura previa al migrar de arreglos rígidos de tamaño estático (`[]`) a estructuras de datos dinámicas provistas por el **Java Collections Framework**. Esto permite al simulador gestionar cargas y pipelines dinámicos en tiempo de ejecución.
@@ -354,8 +334,8 @@ Reporte de Auditoría: Modelos de Alta Precisión
 Filtrando modelos con precisión estrictamente superior al 80%
  -> [APROBADO] Perceptrón Multicapa (85.00%)
  -> [APROBADO] Random Forest Node (81.00%)
-````
 ```
+
 
 ## Fase 7: Mecanismos de Control de Errores y Tolerancia a Fallos (Exception Handling)
 
